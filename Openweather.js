@@ -172,26 +172,42 @@ function getCityCoordinate(){
             alert(`Erreur de recherche de la ville ${cityName}. Veuillez réessayer.`);
     });
 }
+let previousLatitude = null;
+let previousLongitude = null;
 
-function getUserCoordinates(){
+function getUserCoordinates() {
     navigator.geolocation.getCurrentPosition(position => {
-        let {latitude, longitude} = position.coords;
-        let REVERSE_GEOCODING_API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${api_cle}`;
+        const { latitude, longitude } = position.coords;
 
-        fetch(REVERSE_GEOCODING_API_URL).then(response => response.json()).then(data => {
-            console.log(data);
-            let {name, country, state} = data[0];
-            getWeatherDetails(latitude, longitude, name, country, state);
-        }).catch(() => {
-            alert(`Erreur de recherche de localisation actuel. Veuillez réessayer.`);
-        });
+        if (latitude !== previousLatitude || longitude !== previousLongitude) {
+            previousLatitude = latitude;
+            previousLongitude = longitude;
+
+            const REVERSE_GEOCODING_API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${api_cle}`;
+
+            fetch(REVERSE_GEOCODING_API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    const { name, country, state } = data[0];
+                    getWeatherDetails(latitude, longitude, name, country, state);
+                })
+                .catch(() => {
+                    alert(`Erreur de recherche de la localisation actuelle. Veuillez réessayer.`);
+                });
+        }
     }, error => {
         if (error.code === error.PERMISSION_DENIED) {
             alert('Veuillez autoriser la géolocalisation pour utiliser cette fonctionnalité.');
         }
     });
+
 }
 
+// Appel initial au chargement de la page
+getUserCoordinates();
+
+// Vérification périodique toutes les 60 secondes 
+setInterval(getUserCoordinates, 18000000); // 30 minutes
 
 searchBtn.addEventListener('click', getCityCoordinate);
 locationBtn.addEventListener('click', getUserCoordinates);
