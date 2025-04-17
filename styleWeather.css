@@ -15,10 +15,16 @@
 
 body{
     min-height: 100vh;
-    color:#f0f8ff;
-    font-family: sans-serif;
     background-color: #9b9696;
     padding: 0 15px;
+    background: url('bg.jpg');
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    position: absolute;
+    color:#f0f8ff;
+    font-family: sans-serif;
+    backdrop-filter: blur(15px);
 }
 
 hr{
@@ -28,14 +34,18 @@ hr{
 .header{
     position: sticky;
     top: 0;
-    background-color: #9b9696;
+    background-color: rgb(0,0,0, 0.65);
+    backdrop-filter: blur(35px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
     padding: 15px 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 25px;
     & #city_input{
-        background-color: rgb(68, 67, 67);
+        background-color: rgb(0,0,0, 0.35);
         border: none;
         padding: 12px;
         font-size: 14px;
@@ -65,13 +75,13 @@ hr{
 }
 
 .card{
-    background-color: #555;
+    background-color: rgb(0,0,0, 0.65);
     padding: 15px;
     border-radius: 15px;
     margin-bottom: 15px;
     & p{
         font-size: 16px;
-        color: #9b9696;
+        color: #ebeaea;
     }
     & h2{
         font-size: 32px;
@@ -94,7 +104,7 @@ hr{
                 margin: 7px 0;
             }
             & p{
-                color: #9b9696;
+                color: #e7e5e5;
             }
         }
         & .card-footer{

@@ -34,22 +34,22 @@ function getWeatherDetails(lat, lon, name, country, state) {
             <div class="item">
                 <p>PM2.5</p>
                 <p>μg/m3</p>
-                <h2>${pm2_5}</h2>
+                <h2>${(pm2_5).toFixed(1)}</h2>
             </div>
             <div class="item">
                 <p>PM10</p>
                 <p>μg/m3</p>
-                <h2>${pm10}</h2>
+                <h2>${(pm10).toFixed(1)}</h2>
             </div>
             <div class="item">
                 <p>CO</p>
                 <p>ppb</p>
-                <h2>${co}</h2>
+                <h2>${(co).toFixed(1)}</h2>
             </div>
             <div class="item">
                 <p>S0²</p>
                 <p>ppb</p>
-                <h2>${so2}</h2>
+                <h2>${(so2).toFixed(1)}</h2>
             </div>
         </div>`;
     }).catch(() => {
@@ -213,11 +213,11 @@ function getUserCoordinates(forceRefresh = false) {
 locationBtn.addEventListener('click', getUserCoordinates);
 // locationBtn.addEventListener("click", () => {
 //     locationBtn.classList.add("animate-pulse");
-
+    
 //     setTimeout(() => {
 //         locationBtn.classList.remove("animate-pulse");
 //     }, 400);
-//     getUserCoordinates();
+//     getUserCoordinates(); 
 // });
 
 // Appel au chargement de la page
