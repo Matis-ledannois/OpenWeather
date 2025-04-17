@@ -175,25 +175,25 @@ function getCityCoordinate(){
 let previousLatitude = null;
 let previousLongitude = null;
 let lastFetchTimestamp = null; // horodatage de la dernière requête réussie
-const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes en millisecondes
+let CACHE_DURATION = 10 * 60 * 1000; // 10 minutes en millisecondes
 
 function getUserCoordinates(forceRefresh = false) {
     navigator.geolocation.getCurrentPosition(position => {
-        const { latitude, longitude } = position.coords;
-        const currentTime = new Date().getTime();
+        let { latitude, longitude } = position.coords;
+        let currentTime = new Date().getTime();
 
-        const hasMoved = latitude !== previousLatitude || longitude !== previousLongitude;
-        const isCacheExpired = !lastFetchTimestamp || (currentTime - lastFetchTimestamp > CACHE_DURATION);
+        let hasMoved = latitude !== previousLatitude || longitude !== previousLongitude;
+        let isCacheExpired = !lastFetchTimestamp || (currentTime - lastFetchTimestamp > CACHE_DURATION);
 
         if (hasMoved || isCacheExpired || forceRefresh) {
             previousLatitude = latitude;
             previousLongitude = longitude;
             lastFetchTimestamp = currentTime; // met à jour le cache
 
-            const REVERSE_GEOCODING_API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${api_cle}`;
+            let REVERSE_GEOCODING_API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${api_cle}`;
 
             fetch(REVERSE_GEOCODING_API_URL).then(response => response.json()).then(data => {
-                const { name, country, state } = data[0];
+                let { name, country, state } = data[0];
                 getWeatherDetails(latitude, longitude, name, country, state);
             })
             .catch(() => {
