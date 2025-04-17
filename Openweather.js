@@ -174,26 +174,33 @@ function getCityCoordinate(){
 }
 let previousLatitude = null;
 let previousLongitude = null;
+let lastFetchTimestamp = null; // horodatage de la dernière requête réussie
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes en millisecondes
 
-function getUserCoordinates() {
+function getUserCoordinates(forceRefresh = false) {
     navigator.geolocation.getCurrentPosition(position => {
         const { latitude, longitude } = position.coords;
+        const currentTime = new Date().getTime();
 
-        if (latitude !== previousLatitude || longitude !== previousLongitude) {
+        const hasMoved = latitude !== previousLatitude || longitude !== previousLongitude;
+        const isCacheExpired = !lastFetchTimestamp || (currentTime - lastFetchTimestamp > CACHE_DURATION);
+
+        if (hasMoved || isCacheExpired || forceRefresh) {
             previousLatitude = latitude;
             previousLongitude = longitude;
+            lastFetchTimestamp = currentTime; // met à jour le cache
 
             const REVERSE_GEOCODING_API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${api_cle}`;
 
-            fetch(REVERSE_GEOCODING_API_URL)
-                .then(response => response.json())
-                .then(data => {
-                    const { name, country, state } = data[0];
-                    getWeatherDetails(latitude, longitude, name, country, state);
-                })
-                .catch(() => {
-                    alert(`Erreur de recherche de la localisation actuelle. Veuillez réessayer.`);
-                });
+            fetch(REVERSE_GEOCODING_API_URL).then(response => response.json()).then(data => {
+                const { name, country, state } = data[0];
+                getWeatherDetails(latitude, longitude, name, country, state);
+            })
+            .catch(() => {
+                alert(`Erreur de recherche de la localisation actuelle. Veuillez réessayer.`);
+            });
+        } else {
+            console.log("Données en cache toujours valides, pas de nouvelle requête.");
         }
     }, error => {
         if (error.code === error.PERMISSION_DENIED) {
@@ -203,14 +210,32 @@ function getUserCoordinates() {
 
 }
 
-// Appel initial au chargement de la page
+locationBtn.addEventListener('click', getUserCoordinates);
+// locationBtn.addEventListener("click", () => {
+//     locationBtn.classList.add("animate-pulse");
+
+//     setTimeout(() => {
+//         locationBtn.classList.remove("animate-pulse");
+//     }, 400);
+//     getUserCoordinates();
+// });
+
+// Appel au chargement de la page
 getUserCoordinates();
 
-// Vérification périodique toutes les 60 secondes 
-setInterval(getUserCoordinates, 18000000); // 30 minutes
+// Vérification périodique toutes les 10 minutes 
+setInterval(getUserCoordinates, 600000); // 10 minutes
 
-searchBtn.addEventListener('click', getCityCoordinate);
-locationBtn.addEventListener('click', getUserCoordinates);
+// searchBtn.addEventListener('click', getCityCoordinate);
+searchBtn.addEventListener("click", () => {
+    searchBtn.classList.add("animate-pulse");
+
+    setTimeout(() => {
+        searchBtn.classList.remove("animate-pulse");
+    }, 400);
+    getCityCoordinate(); 
+});
+
 
 // https://api.openweathermap.org/data/2.5/weather?q=Bordeaux&appid=c6dea39f86ea31dc114f0a4f0eec8fa9&units=metric&lang=fr
 
